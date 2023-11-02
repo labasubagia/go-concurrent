@@ -17,6 +17,12 @@ func BenchmarkWaitGroup(b *testing.B) {
 	}
 }
 
+func BenchmarkChannel(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		cn.UseChannel()
+	}
+}
+
 func BenchmarkSemaphoreOuter(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		cn.UseSemaphoreFoOuter()
