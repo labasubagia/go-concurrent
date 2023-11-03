@@ -8,7 +8,7 @@ import (
 	"github.com/labasubagia/go-concurrent/util"
 )
 
-var data = util.GenNestedDuration(10, 10, time.Millisecond*500)
+var data = util.GenNestedDuration(10, 100, time.Millisecond)
 var cn = concurrent.NewConcurrent(data, 10, false)
 
 func BenchmarkWaitGroup(b *testing.B) {
@@ -20,6 +20,12 @@ func BenchmarkWaitGroup(b *testing.B) {
 func BenchmarkChannel(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		cn.UseChannel()
+	}
+}
+
+func BenchmarkWaiGroupAndChannelNested(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		cn.UseWaiGroupAndChannelNested()
 	}
 }
 

@@ -59,6 +59,42 @@ func (c Concurrent) UseChannel() {
 	close(channels)
 }
 
+func (c Concurrent) UseWaiGroupAndChannelNested() {
+	var wg sync.WaitGroup
+	chInner := make(chan any, c.worker)
+	chOuter := make(chan any, c.worker)
+
+	for i, inner := range c.data {
+		chOuter <- 0
+		wg.Add(1)
+		go func(i int, inner []time.Duration) {
+			defer func() {
+				defer wg.Done()
+				<-chOuter
+			}()
+
+			for j, duration := range inner {
+				chInner <- 0
+				wg.Add(1)
+				go func(i, j int, d time.Duration) {
+					defer func() {
+						defer wg.Done()
+						<-chInner
+					}()
+					time.Sleep(d)
+					if c.isShowLog {
+						log.Println("process", i, "item", j)
+					}
+				}(i, j, duration)
+			}
+		}(i, inner)
+	}
+
+	wg.Wait()
+	close(chInner)
+	close(chOuter)
+}
+
 func (c Concurrent) UseSemaphoreFoOuter() {
 	ctx := context.Background()
 	sem := semaphore.NewWeighted(int64(c.worker))

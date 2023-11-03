@@ -18,7 +18,7 @@ func main() {
 	start := time.Now()
 
 	// use here
-	cn.UseChannel()
+	cn.UseWaiGroupAndChannelNested()
 	// end here
 
 	elapsed := time.Since(start)
